@@ -1,0 +1,9 @@
+# 代理IP列表
+# 格式: protocol://ip:port 或 protocol://username:password@ip:port
+# 示例:
+# http://127.0.0.1:8080
+# https://user:pass@127.0.0.1:8080
+# socks5://127.0.0.1:1080
+
+# 请在此处添加您的代理IP
+# 注意：使用代理时请确保遵守相关法律法规 

@@ -1,0 +1,22 @@
+# 数据库配置
+MONGODB_URI=mongodb://localhost:27017
+MONGODB_DATABASE=gamemarket
+
+MYSQL_HOST=localhost
+MYSQL_PORT=3306
+MYSQL_USER=root
+MYSQL_PASSWORD=your_password
+MYSQL_DATABASE=gamemarket
+
+# Redis配置
+REDIS_URL=redis://localhost:6379
+
+# 代理配置
+PROXY_ENABLED=False
+
+# 日志配置
+LOG_LEVEL=INFO
+
+# 爬虫配置
+DOWNLOAD_DELAY=2
+CONCURRENT_REQUESTS=16 

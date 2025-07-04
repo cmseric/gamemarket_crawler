@@ -1,0 +1,55 @@
+# 爬虫核心框架
+scrapy==2.11.0
+scrapy-redis==0.7.3
+scrapy-playwright==0.0.34
+
+# 动态页面渲染
+playwright==1.40.0
+
+# 数据处理
+pandas==2.1.4
+numpy==1.24.3
+pyspark==3.5.0
+
+# 数据库
+pymongo==4.6.0
+pymysql==1.1.0
+redis==5.0.1
+
+# 任务调度
+apache-airflow==2.8.1
+
+# 数据清洗和分析
+beautifulsoup4==4.12.2
+lxml==4.9.3
+requests==2.31.0
+
+# 情感分析
+transformers==4.36.2
+torch==2.1.2
+nltk==3.8.1
+
+# 配置管理
+python-dotenv==1.0.0
+pyyaml==6.0.1
+
+# 日志和监控
+loguru==0.7.2
+prometheus-client==0.19.0
+
+# 测试
+pytest==7.4.3
+pytest-asyncio==0.21.1
+
+# 工具库
+tqdm==4.66.1
+click==8.1.7
+rich==13.7.0
+
+# 反爬虫工具
+fake-useragent==1.4.0
+undetected-chromedriver==3.5.4
+
+# 数据验证
+pydantic==2.5.2
+marshmallow==3.20.1 
