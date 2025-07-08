@@ -1,5 +1,6 @@
 # 爬虫核心框架
 scrapy==2.11.0
+twisted==22.10.0
 scrapy-redis==0.7.3
 scrapy-playwright==0.0.34
 

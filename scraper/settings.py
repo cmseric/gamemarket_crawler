@@ -36,7 +36,9 @@ DOWNLOAD_HANDLERS = {
 }
 
 # Playwright设置
-# TWISTED_REACTOR = "twisted.internet.asyncio.AsyncioSelectorReactor"  # 注释掉，避免兼容性问题
+
+# 强制使用默认的reactor，避免asyncio问题
+TWISTED_REACTOR = "twisted.internet.selectreactor.SelectReactor"
 PLAYWRIGHT_LAUNCH_OPTIONS = {
     "headless": True,
     "args": [
@@ -59,19 +61,19 @@ DEFAULT_REQUEST_HEADERS = {
     'Upgrade-Insecure-Requests': '1',
 }
 
-# 中间件设置
-DOWNLOADER_MIDDLEWARES = {
-    'scraper.middlewares.RandomUserAgentMiddleware': 400,
-    'scrapy.downloadermiddlewares.useragent.UserAgentMiddleware': None,
-}
+# 中间件设置（暂时禁用）
+# DOWNLOADER_MIDDLEWARES = {
+#     'scraper.middlewares.RandomUserAgentMiddleware': 400,
+#     'scrapy.downloadermiddlewares.useragent.UserAgentMiddleware': None,
+# }
 
-# 管道设置
-ITEM_PIPELINES = {
-    'scraper.pipelines.DataValidationPipeline': 300,
-    'scraper.pipelines.DataCleaningPipeline': 400,
-    'scraper.pipelines.MongoDBPipeline': 500,
-    'scraper.pipelines.MySQLPipeline': 600,
-}
+# 管道设置（暂时禁用）
+# ITEM_PIPELINES = {
+#     'scraper.pipelines.DataValidationPipeline': 300,
+#     'scraper.pipelines.DataCleaningPipeline': 400,
+#     'scraper.pipelines.MongoDBPipeline': 500,
+#     'scraper.pipelines.MySQLPipeline': 600,
+# }
 
 # Redis设置 (分布式爬虫)
 REDIS_URL = os.getenv('REDIS_URL', 'redis://localhost:6379')
