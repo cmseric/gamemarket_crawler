@@ -36,7 +36,7 @@ DOWNLOAD_HANDLERS = {
 }
 
 # Playwright设置
-TWISTED_REACTOR = "twisted.internet.asyncio.AsyncioSelectorReactor"
+# TWISTED_REACTOR = "twisted.internet.asyncio.AsyncioSelectorReactor"  # 注释掉，避免兼容性问题
 PLAYWRIGHT_LAUNCH_OPTIONS = {
     "headless": True,
     "args": [
@@ -62,8 +62,6 @@ DEFAULT_REQUEST_HEADERS = {
 # 中间件设置
 DOWNLOADER_MIDDLEWARES = {
     'scraper.middlewares.RandomUserAgentMiddleware': 400,
-    'scraper.middlewares.ProxyMiddleware': 410,
-    'scraper.middlewares.RandomDelayMiddleware': 420,
     'scrapy.downloadermiddlewares.useragent.UserAgentMiddleware': None,
 }
 
