@@ -37,8 +37,8 @@ DOWNLOAD_HANDLERS = {
 
 # Playwright设置
 
-# 强制使用默认的reactor，避免asyncio问题
-TWISTED_REACTOR = "twisted.internet.selectreactor.SelectReactor"
+# Playwright需要asyncio reactor
+TWISTED_REACTOR = "twisted.internet.asyncioreactor.AsyncioSelectorReactor"
 PLAYWRIGHT_LAUNCH_OPTIONS = {
     "headless": True,
     "args": [
