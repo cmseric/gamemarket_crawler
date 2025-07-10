@@ -62,18 +62,18 @@ DEFAULT_REQUEST_HEADERS = {
 }
 
 # 中间件设置（暂时禁用）
-# DOWNLOADER_MIDDLEWARES = {
-#     'scraper.middlewares.RandomUserAgentMiddleware': 400,
-#     'scrapy.downloadermiddlewares.useragent.UserAgentMiddleware': None,
-# }
+DOWNLOADER_MIDDLEWARES = {
+    'scraper.middlewares.RandomUserAgentMiddleware': 400,
+    'scrapy.downloadermiddlewares.useragent.UserAgentMiddleware': None,
+}
 
 # 管道设置（暂时禁用）
-# ITEM_PIPELINES = {
-#     'scraper.pipelines.DataValidationPipeline': 300,
-#     'scraper.pipelines.DataCleaningPipeline': 400,
-#     'scraper.pipelines.MongoDBPipeline': 500,
-#     'scraper.pipelines.MySQLPipeline': 600,
-# }
+ITEM_PIPELINES = {
+    'scraper.pipelines.DataValidationPipeline': 300,
+    'scraper.pipelines.DataCleaningPipeline': 400,
+    'scraper.pipelines.MongoDBPipeline': 500,
+    'scraper.pipelines.MySQLPipeline': 600,
+}
 
 # Redis设置 (分布式爬虫)
 REDIS_URL = os.getenv('REDIS_URL', 'redis://localhost:6379')
