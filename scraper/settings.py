@@ -29,28 +29,29 @@ RETRY_ENABLED = True
 RETRY_TIMES = 3
 RETRY_HTTP_CODES = [500, 502, 503, 504, 408, 429]
 
-# 启用Playwright渲染
-DOWNLOAD_HANDLERS = {
-    "http": "scrapy_playwright.handler.ScrapyPlaywrightDownloadHandler",
-    "https": "scrapy_playwright.handler.ScrapyPlaywrightDownloadHandler"
-}
+# 移除Playwright配置，使用标准HTTP下载器
+# 在Windows环境下，Playwright与asyncio reactor存在兼容性问题
+# DOWNLOAD_HANDLERS = {
+#     "http": "scrapy_playwright.handler.ScrapyPlaywrightDownloadHandler",
+#     "https": "scrapy_playwright.handler.ScrapyPlaywrightDownloadHandler"
+# }
 
-# Playwright设置
+# 使用标准reactor，避免Playwright兼容性问题
+# TWISTED_REACTOR = "twisted.internet.asyncioreactor.AsyncioSelectorReactor"
 
-# Playwright需要asyncio reactor
-TWISTED_REACTOR = "twisted.internet.asyncioreactor.AsyncioSelectorReactor"
-PLAYWRIGHT_LAUNCH_OPTIONS = {
-    "headless": True,
-    "args": [
-        "--no-sandbox",
-        "--disable-setuid-sandbox",
-        "--disable-dev-shm-usage",
-        "--disable-accelerated-2d-canvas",
-        "--no-first-run",
-        "--no-zygote",
-        "--disable-gpu"
-    ]
-}
+# Playwright设置（暂时禁用）
+# PLAYWRIGHT_LAUNCH_OPTIONS = {
+#     "headless": True,
+#     "args": [
+#         "--no-sandbox",
+#         "--disable-setuid-sandbox",
+#         "--disable-dev-shm-usage",
+#         "--disable-accelerated-2d-canvas",
+#         "--no-first-run",
+#         "--no-zygote",
+#         "--disable-gpu"
+#     ]
+# }
 
 # 请求头设置
 DEFAULT_REQUEST_HEADERS = {
@@ -61,13 +62,13 @@ DEFAULT_REQUEST_HEADERS = {
     'Upgrade-Insecure-Requests': '1',
 }
 
-# 中间件设置（暂时禁用）
+# 中间件设置
 DOWNLOADER_MIDDLEWARES = {
     'scraper.middlewares.RandomUserAgentMiddleware': 400,
     'scrapy.downloadermiddlewares.useragent.UserAgentMiddleware': None,
 }
 
-# 管道设置（暂时禁用）
+# 管道设置
 ITEM_PIPELINES = {
     'scraper.pipelines.DataValidationPipeline': 300,
     'scraper.pipelines.DataCleaningPipeline': 400,

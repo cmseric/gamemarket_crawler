@@ -19,8 +19,9 @@ class SteamTopSellersSpider(scrapy.Spider):
     
     custom_settings = {
         "DOWNLOAD_DELAY": 3,  # 合规延迟
-        "PLAYWRIGHT_ENABLED": True,
-        "PLAYWRIGHT_DEFAULT_NAVIGATION_TIMEOUT": 30000,
+        # 移除Playwright设置，使用标准HTTP下载器
+        # "PLAYWRIGHT_ENABLED": True,
+        # "PLAYWRIGHT_DEFAULT_NAVIGATION_TIMEOUT": 30000,
     }
 
     def parse(self, response):
@@ -160,7 +161,8 @@ class SteamPopularSpider(scrapy.Spider):
     
     custom_settings = {
         "DOWNLOAD_DELAY": 2,
-        "PLAYWRIGHT_ENABLED": True,
+        # 移除Playwright设置，使用标准HTTP下载器
+        # "PLAYWRIGHT_ENABLED": True,
     }
 
     def parse(self, response):

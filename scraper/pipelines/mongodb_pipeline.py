@@ -59,7 +59,7 @@ class MongoDBPipeline:
         try:
             # 获取对应的集合
             collection = self.collections.get(spider.name)
-            if not collection:
+            if collection is None:
                 logger.error(f"未找到爬虫 {spider.name} 对应的集合")
                 return item
             
