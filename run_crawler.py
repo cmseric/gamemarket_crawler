@@ -43,10 +43,12 @@ def configure_settings(settings, spider_name, output_format='json'):
         'scrapy.downloadermiddlewares.useragent.UserAgentMiddleware': None,
     })
     
-    # 启用数据验证和清洗管道
+    # 启用数据验证、清洗和数据库管道
     settings.set('ITEM_PIPELINES', {
         'scraper.pipelines.DataValidationPipeline': 300,
         'scraper.pipelines.DataCleaningPipeline': 400,
+        'scraper.pipelines.MongoDBPipeline': 500,
+        'scraper.pipelines.MySQLPipeline': 600,
     })
     
     # 基本设置
