@@ -50,15 +50,21 @@ graph TD
 - Redis 5.0+（分布式任务队列）
 - MongoDB 4.4+ / MySQL 8.0+
 
-#### 安装步骤
+#### 环境设置
+
+**方法1：使用conda环境（推荐）**
 
 ```shell
 # 克隆项目
 git clone https://github.com/cmseric/gamemarket_crawler.git
-cd gamemarket-crawler
+cd gamemarket_crawler
+
+# 创建并激活conda环境
+conda create -n gamemarket_crawler python=3.11 -y
+conda activate gamemarket_crawler
 
 # 安装依赖
-pip install -r requirements.txt  # 包含Scrapy, Playwright, Pandas等
+pip install -r requirements.txt
 
 # 初始化Playwright浏览器
 playwright install chromium
@@ -66,6 +72,33 @@ playwright install chromium
 # 启动Redis（Docker方式）
 docker run -d --name redis-crawler -p 6379:6379 redis:latest
 ```
+
+**方法2：使用项目提供的环境配置文件**
+
+```shell
+# 使用environment.yml创建环境
+conda env create -f environment.yml
+
+# 激活环境
+conda activate gamemarket_crawler
+
+# 运行环境检查脚本
+python run_project.py
+```
+
+**方法3：快速激活脚本**
+
+```shell
+# 使用项目提供的激活脚本
+source activate_env.sh
+
+# 或者直接运行项目启动脚本
+python run_project.py
+```
+
+**VS Code用户设置**
+
+项目已包含`.vscode/settings.json`配置，VS Code会自动使用正确的Python解释器。
 
 ---
 
