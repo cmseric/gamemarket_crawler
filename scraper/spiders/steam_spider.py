@@ -15,7 +15,7 @@ class SteamTopSellersSpider(scrapy.Spider):
     """Steam畅销游戏爬虫"""
     name = "steam_top_sellers"
     allowed_domains = ["steampowered.com"]
-    start_urls = ["https://store.steampowered.com/search/?filter=topsellers"]
+    start_urls = ["https://store.steampowered.com/search/?filter=topsellers&cc=cn"]  # 中国区
     
     custom_settings = {
         "DOWNLOAD_DELAY": 3,  # 合规延迟
@@ -157,7 +157,7 @@ class SteamPopularSpider(scrapy.Spider):
     """Steam热门游戏爬虫"""
     name = "steam_popular"
     allowed_domains = ["steampowered.com"]
-    start_urls = ["https://store.steampowered.com/search/?filter=popularnew"]
+    start_urls = ["https://store.steampowered.com/search/?filter=popularnew&cc=cn"]  # 中国区
     
     custom_settings = {
         "DOWNLOAD_DELAY": 2,
