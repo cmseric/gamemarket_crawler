@@ -29,6 +29,18 @@ def main():
         "redis", "requests", "loguru"
     ]
     
+    # 检查playwright浏览器
+    try:
+        import subprocess
+        result = subprocess.run(['playwright', '--version'], 
+                              capture_output=True, text=True)
+        if result.returncode == 0:
+            print("✅ playwright浏览器已安装")
+        else:
+            print("❌ playwright浏览器未安装")
+    except Exception:
+        print("❌ playwright浏览器检查失败")
+    
     print("\n📦 检查关键包:")
     for package in key_packages:
         try:
