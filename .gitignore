@@ -173,6 +173,7 @@ logs/
 cache/
 export/
 test_output/
+resources/
 
 # 数据库文件
 *.db
