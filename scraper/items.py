@@ -9,6 +9,10 @@ from scrapy import Field
 
 class SteamGameItem(scrapy.Item):
     """Steam游戏数据项"""
+    # 排名信息
+    rank = Field()                    # 排名位置
+    rank_type = Field()               # 排名类型 (topsellers/popular/new)
+    
     # 基本信息
     name = Field()                    # 游戏名称
     app_id = Field()                  # Steam应用ID

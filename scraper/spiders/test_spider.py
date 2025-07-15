@@ -27,6 +27,8 @@ class TestSpider(scrapy.Spider):
         # 创建测试数据
         test_items = [
             {
+                'rank': 1,
+                'rank_type': 'test',
                 'name': '测试游戏1',
                 'app_id': 'test001',
                 'price': '¥99',
@@ -36,6 +38,8 @@ class TestSpider(scrapy.Spider):
                 'status': '测试数据'
             },
             {
+                'rank': 2,
+                'rank_type': 'test',
                 'name': '测试游戏2',
                 'app_id': 'test002',
                 'price': '¥199',
@@ -45,6 +49,8 @@ class TestSpider(scrapy.Spider):
                 'status': '测试数据'
             },
             {
+                'rank': 3,
+                'rank_type': 'test',
                 'name': '测试游戏3',
                 'app_id': 'test003',
                 'price': '¥299',
@@ -57,9 +63,17 @@ class TestSpider(scrapy.Spider):
         
         for i, test_data in enumerate(test_items):
             item = SteamGameItem()
-            item.update(test_data)
+            # 正确设置字段
+            item['rank'] = test_data['rank']
+            item['rank_type'] = test_data['rank_type']
+            item['name'] = test_data['name']
+            item['app_id'] = test_data['app_id']
+            item['price'] = test_data['price']
+            item['developer'] = test_data['developer']
+            item['crawl_time'] = test_data['crawl_time']
+            item['crawl_date'] = test_data['crawl_date']
             
-            logger.info(f"生成测试数据 {i+1}: {item['name']}")
+            logger.info(f"生成测试数据 {i+1}: {item['name']} (排名: {item['rank']})")
             yield item
         
         logger.info("测试爬虫完成") 

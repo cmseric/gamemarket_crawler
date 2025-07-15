@@ -40,6 +40,10 @@ class SteamTopSellersSpider(scrapy.Spider):
         for i, game in enumerate(games):
             item = SteamGameItem()
             
+            # 排名信息
+            item['rank'] = i + 1  # 排名从1开始
+            item['rank_type'] = 'topsellers'  # 热销榜类型
+            
             # 基本信息
             item['name'] = game.css('span.title::text').get()
             if not item['name']:
@@ -180,6 +184,10 @@ class SteamPopularSpider(scrapy.Spider):
         
         for i, game in enumerate(games):
             item = SteamGameItem()
+            
+            # 排名信息
+            item['rank'] = i + 1  # 排名从1开始
+            item['rank_type'] = 'popular'  # 热门榜类型
             
             # 基本信息
             item['name'] = game.css('span.title::text').get()
