@@ -147,9 +147,11 @@ class MySQLPipeline:
                 logger.error("数据库连接未建立，无法创建表")
                 return
             
-            # 获取当前日期，用于分表
+            # 获取当前日期，用于分表（按周分表）
             current_date = datetime.now()
-            table_suffix = current_date.strftime('%Y%m')
+            # 计算当前日期是第几周
+            week_number = current_date.isocalendar()[1]
+            table_suffix = f"{current_date.strftime('%Y')}W{week_number:02d}"
             
             if spider_name in ['steam_top_sellers', 'steam_popular']:
                 # Steam游戏分表
@@ -171,7 +173,7 @@ class MySQLPipeline:
                     total_reviews INT NULL,
                     genres TEXT NULL,
                     tags TEXT NULL,
-                    rank INT NULL,
+                    `rank` INT NULL,
                     rank_type VARCHAR(50) NULL,
                     crawl_date DATE NOT NULL,
                     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -182,7 +184,7 @@ class MySQLPipeline:
                     INDEX idx_crawl_date (crawl_date),
                     INDEX idx_price (price),
                     INDEX idx_discount (discount_percent),
-                    INDEX idx_rank (rank),
+                    INDEX idx_rank (`rank`),
                     INDEX idx_rank_type (rank_type),
                     UNIQUE KEY uk_app_date (app_id, crawl_date)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
