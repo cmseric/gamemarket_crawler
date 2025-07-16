@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}{{ app_name }}{% endblock %}</title>
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Font Awesome -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- 自定义CSS -->
+  <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+
+  {% block extra_head %}{% endblock %}
+</head>
+
+<body>
+  <!-- 导航栏 -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container">
+      <a class="navbar-brand" href="{{ url_for('index') }}">
+        <i class="fas fa-gamepad me-2"></i>{{ app_name }}
+      </a>
+
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav me-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('index') }}">
+              <i class="fas fa-home me-1"></i>概览
+            </a>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+              <i class="fas fa-trophy me-1"></i>排行榜
+            </a>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="{{ url_for('rankings', type='topsellers') }}">
+                  <i class="fas fa-fire me-1"></i>热销榜
+                </a></li>
+              <li><a class="dropdown-item" href="{{ url_for('rankings', type='popular') }}">
+                  <i class="fas fa-star me-1"></i>热门榜
+                </a></li>
+            </ul>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('analytics') }}">
+              <i class="fas fa-chart-bar me-1"></i>数据分析
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('tables') }}">
+              <i class="fas fa-database me-1"></i>数据表
+            </a>
+          </li>
+        </ul>
+
+        <ul class="navbar-nav">
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+              <i class="fas fa-cog me-1"></i>设置
+            </a>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="#" onclick="clearCache()">
+                  <i class="fas fa-trash me-1"></i>清除缓存
+                </a></li>
+              <li><a class="dropdown-item" href="#" onclick="refreshData()">
+                  <i class="fas fa-sync me-1"></i>刷新数据
+                </a></li>
+            </ul>
+          </li>
+          <li class="nav-item">
+            <span class="navbar-text small">
+              <i class="fas fa-clock me-1"></i>{{ current_time.strftime('%H:%M') }}
+            </span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- 主要内容区域 -->
+  <div class="container-fluid mt-4">
+    <!-- Flash消息 -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    {% for category, message in messages %}
+    <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show"
+      role="alert">
+      {{ message }}
+      <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+    {% endfor %}
+    {% endif %}
+    {% endwith %}
+
+    <!-- 页面内容 -->
+    {% block content %}{% endblock %}
+  </div>
+
+  <!-- 页脚 -->
+  <footer class="bg-light mt-5 py-4">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-6">
+          <h6>GameMarket Crawler Dashboard</h6>
+          <p class="text-muted small">
+            实时监控Steam游戏市场数据，提供排行榜分析和趋势预测
+          </p>
+        </div>
+        <div class="col-md-6 text-md-end">
+          <p class="text-muted small">
+            Version {{ version }} |
+            <a href="https://github.com/your-repo/gamemarket_crawler" target="_blank">
+              <i class="fab fa-github"></i> GitHub
+            </a>
+          </p>
+          <p class="text-muted small">
+            最后更新: {{ current_time.strftime('%Y-%m-%d %H:%M:%S') }}
+          </p>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- 自定义JS -->
+  <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+
+  {% block extra_scripts %}{% endblock %}
+
+  <script>
+    // 全局函数
+    function clearCache() {
+      if (confirm('确定要清除所有缓存吗？')) {
+        fetch('/api/cache/clear')
+          .then(response => response.json())
+          .then(data => {
+            if (data.success) {
+              showToast('缓存已清除', 'success');
+            } else {
+              showToast('清除缓存失败: ' + data.error, 'error');
+            }
+          })
+          .catch(error => {
+            showToast('清除缓存失败: ' + error, 'error');
+          });
+      }
+    }
+
+    function refreshData() {
+      showToast('正在刷新数据...', 'info');
+      location.reload();
+    }
+
+    function showToast(message, type = 'info') {
+      // 简单的toast实现
+      const alertClass = type === 'success' ? 'alert-success' :
+        type === 'error' ? 'alert-danger' : 'alert-info';
+
+      const toast = document.createElement('div');
+      toast.className = `alert ${alertClass} alert-dismissible fade show position-fixed`;
+      toast.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+      toast.innerHTML = `
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+
+      document.body.appendChild(toast);
+
+      // 3秒后自动移除
+      setTimeout(() => {
+        if (toast.parentNode) {
+          toast.parentNode.removeChild(toast);
+        }
+      }, 3000);
+    }
+
+    // 自动刷新数据（每5分钟）
+    setInterval(function () {
+      // 只刷新当前页面的动态数据，不重新加载整个页面
+      if (typeof updatePageData === 'function') {
+        updatePageData();
+      }
+    }, 300000); // 5分钟
+  </script>
+</body>
+
+</html>

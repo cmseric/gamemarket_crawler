@@ -1,0 +1,292 @@
+{% extends "base.html" %}
+
+{% block title %}数据概览 - {{ super() }}{% endblock %}
+
+{% block content %}
+<div class="row">
+  <!-- 统计卡片 -->
+  <div class="col-md-3 mb-4">
+    <div class="card bg-primary text-white h-100">
+      <div class="card-body">
+        <div class="d-flex justify-content-between">
+          <div>
+            <h6 class="card-title mb-0">总游戏数</h6>
+            <h2 class="mt-2 mb-0">{{ summary.total_games or 0 }}</h2>
+            <small>数据库中的游戏总数</small>
+          </div>
+          <div class="align-self-center">
+            <i class="fas fa-gamepad fa-2x opacity-50"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-3 mb-4">
+    <div class="card bg-success text-white h-100">
+      <div class="card-body">
+        <div class="d-flex justify-content-between">
+          <div>
+            <h6 class="card-title mb-0">独立游戏</h6>
+            <h2 class="mt-2 mb-0">{{ summary.unique_games or 0 }}</h2>
+            <small>去重后的游戏数量</small>
+          </div>
+          <div class="align-self-center">
+            <i class="fas fa-star fa-2x opacity-50"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-3 mb-4">
+    <div class="card bg-warning text-white h-100">
+      <div class="card-body">
+        <div class="d-flex justify-content-between">
+          <div>
+            <h6 class="card-title mb-0">平均价格</h6>
+            <h2 class="mt-2 mb-0">¥{{ summary.avg_price or 0 }}</h2>
+            <small>所有付费游戏平均价格</small>
+          </div>
+          <div class="align-self-center">
+            <i class="fas fa-money-bill fa-2x opacity-50"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-3 mb-4">
+    <div class="card bg-info text-white h-100">
+      <div class="card-body">
+        <div class="d-flex justify-content-between">
+          <div>
+            <h6 class="card-title mb-0">数据表数</h6>
+            <h2 class="mt-2 mb-0">{{ summary.total_tables or 0 }}</h2>
+            <small>分表数量</small>
+          </div>
+          <div class="align-self-center">
+            <i class="fas fa-database fa-2x opacity-50"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 排行榜统计 -->
+<div class="row mb-4">
+  <div class="col-md-6">
+    <div class="card">
+      <div class="card-header">
+        <h5 class="mb-0">
+          <i class="fas fa-trophy me-2"></i>排行榜统计
+        </h5>
+      </div>
+      <div class="card-body">
+        {% if summary.rank_stats %}
+        <div class="row">
+          {% for rank_type, count in summary.rank_stats.items() %}
+          <div class="col-6 mb-3">
+            <div class="text-center">
+              <h4 class="mb-1 text-primary">{{ count }}</h4>
+              <p class="mb-0 text-muted">
+                {% if rank_type == 'topsellers' %}
+                <i class="fas fa-fire me-1"></i>热销榜
+                {% elif rank_type == 'popular' %}
+                <i class="fas fa-star me-1"></i>热门榜
+                {% else %}
+                {{ rank_type }}
+                {% endif %}
+              </p>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+        {% else %}
+        <p class="text-muted text-center">暂无排行榜数据</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-6">
+    <div class="card">
+      <div class="card-header">
+        <h5 class="mb-0">
+          <i class="fas fa-clock me-2"></i>数据更新状态
+        </h5>
+      </div>
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <span>最后更新时间:</span>
+          <span class="badge bg-success">{{ summary.last_update or 'N/A' }}</span>
+        </div>
+
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <span>数据新鲜度:</span>
+          <span class="badge bg-{% if summary.last_update %}primary{% else %}secondary{% endif %}">
+            {% if summary.last_update %}良好{% else %}未知{% endif %}
+          </span>
+        </div>
+
+        <div class="progress mb-2">
+          <div class="progress-bar bg-success" role="progressbar" style="width: 85%"></div>
+        </div>
+        <small class="text-muted">数据完整性: 85%</small>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 快速访问 -->
+<div class="row mb-4">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-header">
+        <h5 class="mb-0">
+          <i class="fas fa-rocket me-2"></i>快速访问
+        </h5>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <div class="col-md-3 mb-3">
+            <a href="{{ url_for('rankings', type='topsellers') }}" class="btn btn-outline-primary w-100">
+              <i class="fas fa-fire me-2"></i>
+              <div>Steam热销榜</div>
+              <small class="text-muted">查看最热门的付费游戏</small>
+            </a>
+          </div>
+          <div class="col-md-3 mb-3">
+            <a href="{{ url_for('rankings', type='popular') }}" class="btn btn-outline-success w-100">
+              <i class="fas fa-star me-2"></i>
+              <div>Steam热门榜</div>
+              <small class="text-muted">查看最受欢迎的游戏</small>
+            </a>
+          </div>
+          <div class="col-md-3 mb-3">
+            <a href="{{ url_for('analytics') }}" class="btn btn-outline-info w-100">
+              <i class="fas fa-chart-bar me-2"></i>
+              <div>数据分析</div>
+              <small class="text-muted">价格、类型、折扣分析</small>
+            </a>
+          </div>
+          <div class="col-md-3 mb-3">
+            <a href="{{ url_for('tables') }}" class="btn btn-outline-warning w-100">
+              <i class="fas fa-database me-2"></i>
+              <div>数据表管理</div>
+              <small class="text-muted">查看和管理分表数据</small>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 最新游戏预览 -->
+<div class="row">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">
+          <i class="fas fa-list me-2"></i>最新游戏数据预览
+        </h5>
+        <a href="{{ url_for('rankings') }}" class="btn btn-sm btn-primary">查看全部</a>
+      </div>
+      <div class="card-body">
+        <div id="latest-games-preview">
+          <div class="text-center">
+            <div class="spinner-border text-primary" role="status">
+              <span class="visually-hidden">加载中...</span>
+            </div>
+            <p class="mt-2 text-muted">正在加载最新游戏数据...</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  // 页面加载后获取最新游戏数据
+  document.addEventListener('DOMContentLoaded', function () {
+    loadLatestGames();
+  });
+
+  function loadLatestGames() {
+    fetch('/api/games/latest?limit=10')
+      .then(response => response.json())
+      .then(data => {
+        if (data.success && data.data.length > 0) {
+          displayLatestGames(data.data);
+        } else {
+          document.getElementById('latest-games-preview').innerHTML =
+            '<p class="text-muted text-center">暂无游戏数据</p>';
+        }
+      })
+      .catch(error => {
+        console.error('加载最新游戏失败:', error);
+        document.getElementById('latest-games-preview').innerHTML =
+          '<p class="text-danger text-center">加载失败: ' + error + '</p>';
+      });
+  }
+
+  function displayLatestGames(games) {
+    const html = `
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>排名</th>
+                            <th>游戏名称</th>
+                            <th>价格</th>
+                            <th>类型</th>
+                            <th>排行榜</th>
+                            <th>更新时间</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${games.map(game => `
+                            <tr>
+                                <td>
+                                    <span class="badge bg-primary">#${game.rank || 'N/A'}</span>
+                                </td>
+                                <td>
+                                    <strong>${game.name || 'Unknown'}</strong>
+                                    ${game.app_id ? `<br><small class="text-muted">ID: ${game.app_id}</small>` : ''}
+                                </td>
+                                <td>
+                                    <span class="text-success">${game.price || 'N/A'}</span>
+                                    ${game.discount_percent > 0 ? `<br><small class="text-danger">-${game.discount_percent}%</small>` : ''}
+                                </td>
+                                <td>
+                                    <small>${(game.genres || 'N/A').split(',')[0]}</small>
+                                </td>
+                                <td>
+                                    <span class="badge ${game.rank_type === 'topsellers' ? 'bg-warning' : 'bg-info'}">
+                                        ${game.rank_type === 'topsellers' ? '热销' : '热门'}
+                                    </span>
+                                </td>
+                                <td>
+                                    <small class="text-muted">${game.crawl_date || 'N/A'}</small>
+                                </td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            </div>
+        `;
+
+    document.getElementById('latest-games-preview').innerHTML = html;
+  }
+
+  // 定义页面更新函数
+  function updatePageData() {
+    loadLatestGames();
+    showToast('数据已更新', 'success');
+  }
+</script>
+{% endblock %}

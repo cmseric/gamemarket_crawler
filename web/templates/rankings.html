@@ -1,0 +1,245 @@
+{% extends "base.html" %}
+
+{% block title %}
+{% if rank_type == 'topsellers' %}Steam热销榜{% elif rank_type == 'popular' %}Steam热门榜{% else %}游戏排行榜{% endif %} - {{
+super() }}
+{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+  <div class="col-md-8">
+    <h2>
+      {% if rank_type == 'topsellers' %}
+      <i class="fas fa-fire me-2 text-warning"></i>Steam热销榜
+      {% elif rank_type == 'popular' %}
+      <i class="fas fa-star me-2 text-info"></i>Steam热门榜
+      {% else %}
+      <i class="fas fa-trophy me-2"></i>游戏排行榜
+      {% endif %}
+    </h2>
+    <p class="text-muted">共找到 {{ total_count }} 款游戏</p>
+  </div>
+  <div class="col-md-4 text-md-end">
+    <div class="btn-group" role="group">
+      <a href="{{ url_for('rankings', type='topsellers') }}"
+        class="btn {% if rank_type == 'topsellers' %}btn-warning{% else %}btn-outline-warning{% endif %}">
+        <i class="fas fa-fire me-1"></i>热销榜
+      </a>
+      <a href="{{ url_for('rankings', type='popular') }}"
+        class="btn {% if rank_type == 'popular' %}btn-info{% else %}btn-outline-info{% endif %}">
+        <i class="fas fa-star me-1"></i>热门榜
+      </a>
+    </div>
+  </div>
+</div>
+
+{% if games %}
+<div class="row">
+  {% for game in games %}
+  <div class="col-md-6 col-lg-4 mb-4">
+    <div class="card h-100 shadow-sm">
+      <div class="card-body">
+        <!-- 排名徽章 -->
+        <div class="d-flex justify-content-between align-items-start mb-2">
+          <span class="badge bg-primary fs-6"># {{ game.rank or 'N/A' }}</span>
+          <span class="badge {% if rank_type == 'topsellers' %}bg-warning{% else %}bg-info{% endif %}">
+            {% if rank_type == 'topsellers' %}热销{% else %}热门{% endif %}
+          </span>
+        </div>
+
+        <!-- 游戏名称 -->
+        <h6 class="card-title mb-2">{{ game.name or 'Unknown Game' }}</h6>
+
+        <!-- 游戏信息 -->
+        <div class="mb-2">
+          {% if game.app_id %}
+          <small class="text-muted">Steam ID: {{ game.app_id }}</small><br>
+          {% endif %}
+
+          {% if game.developer %}
+          <small class="text-muted">开发商: {{ game.developer }}</small><br>
+          {% endif %}
+
+          {% if game.release_date %}
+          <small class="text-muted">发行日期: {{ game.release_date }}</small>
+          {% endif %}
+        </div>
+
+        <!-- 价格信息 -->
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <div>
+            {% if game.price %}
+            {% if game.discount_percent and game.discount_percent > 0 %}
+            <span class="text-decoration-line-through text-muted small">{{ game.original_price or game.price
+              }}</span><br>
+            <span class="text-success fw-bold">{{ game.price }}</span>
+            <span class="badge bg-danger">-{{ game.discount_percent }}%</span>
+            {% else %}
+            <span class="text-success fw-bold">{{ game.price }}</span>
+            {% endif %}
+            {% else %}
+            <span class="text-muted">价格未知</span>
+            {% endif %}
+          </div>
+        </div>
+
+        <!-- 游戏类型 -->
+        {% if game.genres %}
+        <div class="mb-2">
+          {% set genre_list = game.genres.split(',') %}
+          {% for genre in genre_list[:2] %}
+          <span class="badge bg-light text-dark me-1">{{ genre.strip() }}</span>
+          {% endfor %}
+          {% if genre_list|length > 2 %}
+          <span class="text-muted small">+{{ genre_list|length - 2 }}个</span>
+          {% endif %}
+        </div>
+        {% endif %}
+
+        <!-- 更新时间 -->
+        <div class="text-end">
+          <small class="text-muted">
+            <i class="fas fa-clock me-1"></i>{{ game.crawl_date or 'N/A' }}
+          </small>
+        </div>
+      </div>
+
+      <!-- 卡片底部操作 -->
+      <div class="card-footer bg-transparent">
+        <div class="btn-group w-100" role="group">
+          {% if game.app_id %}
+          <a href="https://store.steampowered.com/app/{{ game.app_id }}/" target="_blank"
+            class="btn btn-outline-primary btn-sm">
+            <i class="fas fa-external-link-alt me-1"></i>Steam页面
+          </a>
+          {% endif %}
+
+          <button class="btn btn-outline-secondary btn-sm"
+            onclick="showGameDetails('{{ game.app_id or '' }}', '{{ game.name or '' }}')">
+            <i class="fas fa-info-circle me-1"></i>详情
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+<!-- 分页控件 -->
+<div class="row mt-4">
+  <div class="col-12">
+    <nav aria-label="排行榜分页">
+      <div class="d-flex justify-content-between align-items-center">
+        <div>
+          <p class="text-muted mb-0">显示 1-{{ total_count }} 条，共 {{ total_count }} 条记录</p>
+        </div>
+        <div>
+          <div class="btn-group">
+            <a href="{{ url_for('rankings', type=rank_type, limit=20) }}"
+              class="btn btn-outline-secondary btn-sm">显示20条</a>
+            <a href="{{ url_for('rankings', type=rank_type, limit=50) }}"
+              class="btn btn-outline-secondary btn-sm">显示50条</a>
+            <a href="{{ url_for('rankings', type=rank_type, limit=100) }}"
+              class="btn btn-outline-secondary btn-sm">显示100条</a>
+          </div>
+        </div>
+      </div>
+    </nav>
+  </div>
+</div>
+
+{% else %}
+<!-- 无数据状态 -->
+<div class="row">
+  <div class="col-12">
+    <div class="text-center py-5">
+      <i class="fas fa-database fa-3x text-muted mb-3"></i>
+      <h4 class="text-muted">暂无排行榜数据</h4>
+      <p class="text-muted">请检查爬虫是否正常运行，或稍后再试</p>
+      <a href="{{ url_for('index') }}" class="btn btn-primary">
+        <i class="fas fa-home me-1"></i>返回首页
+      </a>
+    </div>
+  </div>
+</div>
+{% endif %}
+
+<!-- 游戏详情模态框 -->
+<div class="modal fade" id="gameDetailModal" tabindex="-1">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="gameDetailTitle">游戏详情</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body" id="gameDetailBody">
+        <div class="text-center">
+          <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">加载中...</span>
+          </div>
+          <p class="mt-2">正在加载游戏详情...</p>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  function showGameDetails(appId, gameName) {
+    const modal = new bootstrap.Modal(document.getElementById('gameDetailModal'));
+    const title = document.getElementById('gameDetailTitle');
+    const body = document.getElementById('gameDetailBody');
+
+    title.textContent = gameName || '游戏详情';
+    body.innerHTML = `
+            <div class="text-center">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">加载中...</span>
+                </div>
+                <p class="mt-2">正在加载游戏详情...</p>
+            </div>
+        `;
+
+    modal.show();
+
+    // 模拟加载游戏详情（实际应该从API获取）
+    setTimeout(() => {
+      body.innerHTML = `
+                <div class="row">
+                    <div class="col-md-4">
+                        <img src="https://via.placeholder.com/200x300?text=Game+Cover" 
+                             class="img-fluid rounded" alt="游戏封面">
+                    </div>
+                    <div class="col-md-8">
+                        <h6 class="text-primary">${gameName}</h6>
+                        <p><strong>Steam ID:</strong> ${appId}</p>
+                        <p><strong>状态:</strong> <span class="badge bg-success">可用</span></p>
+                        <p><strong>说明:</strong> 游戏详情功能正在开发中，将来可以显示更多游戏信息、评分、截图等。</p>
+                        
+                        <div class="mt-3">
+                            <h6>快速链接:</h6>
+                            <a href="https://store.steampowered.com/app/${appId}/" target="_blank" class="btn btn-primary btn-sm me-2">
+                                <i class="fas fa-external-link-alt me-1"></i>Steam商店
+                            </a>
+                            <a href="https://steamdb.info/app/${appId}/" target="_blank" class="btn btn-info btn-sm">
+                                <i class="fas fa-database me-1"></i>SteamDB
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            `;
+    }, 1500);
+  }
+
+  // 定义页面更新函数
+  function updatePageData() {
+    showToast('正在刷新排行榜数据...', 'info');
+    location.reload();
+  }
+</script>
+{% endblock %}

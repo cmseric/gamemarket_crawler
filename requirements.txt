@@ -7,6 +7,14 @@ scrapy-playwright==0.0.34
 # 动态页面渲染
 playwright==1.40.0
 
+# Web框架和相关依赖
+flask==3.0.0
+flask-caching==2.1.0
+werkzeug==3.0.1
+jinja2==3.1.2
+itsdangerous==2.1.2
+click==8.1.7
+
 # 数据处理
 pandas==2.1.4
 numpy==1.24.3
@@ -44,7 +52,6 @@ pytest-asyncio==0.21.1
 
 # 工具库
 tqdm==4.66.1
-click==8.1.7
 rich==13.7.0
 
 # 反爬虫工具
@@ -53,4 +60,8 @@ undetected-chromedriver==3.5.4
 
 # 数据验证
 pydantic==2.5.2
-marshmallow==3.20.1 
+marshmallow==3.20.1
+
+# Web应用额外依赖
+gunicorn==21.2.0
+gevent==23.9.1 
